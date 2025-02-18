@@ -2,11 +2,12 @@
 # Serper Google Search MCP Server
 
 A Model Context Protocol server that provides Google search capabilities through the Serper API. This server enables easy integration of Google search functionality into your MCP-enabled applications.
-
+![serper](https://github.com/user-attachments/assets/9f1bd310-683a-463b-990f-b31517e39e01)
 
 ## ✨ Features
 
-- 🌐 Powerful Google search integration through Serper API
+- 🌐 Powerful Google 
+search integration through Serper API
 - 🔄 Rich response data including:
   - Knowledge Graph information
   - Organic search results
