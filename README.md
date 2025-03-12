@@ -1,20 +1,23 @@
 
-# Serper Google Search MCP Server
+# Serper Search MCP Server
 
-![serper-logo](https://github.com/user-attachments/assets/d635efd2-f044-4e42-a938-45e44de7d12b)
-
-A Model Context Protocol server that provides Google search capabilities through the Serper API. This server enables easy integration of Google search functionality into your MCP-enabled applications.
+A Model Context Protocol server that provides Google search capabilities through the Serper API, along with an AI-powered Deep Research tool. This server enables easy integration of search and research functionality into your MCP-enabled applications.
 
 
 ## ✨ Features
 
-- 🌐 Powerful Google 
-search integration through Serper API
-- 🔄 Rich response data including:
+- 🌐 Powerful Google search integration through Serper API
+- 🔄 Rich search response data including:
   - Knowledge Graph information
   - Organic search results
   - "People Also Ask" questions
   - Related searches
+- 🧠 AI-powered Deep Research tool:
+  - Performs multi-step, iterative research
+  - Generates sub-queries to explore topics thoroughly
+  - Synthesizes information from multiple sources
+  - Provides citations for all information
+  - Adjustable research depth levels
 - 🛠 Configurable search parameters:
   - Country targeting
   - Language selection
@@ -75,6 +78,8 @@ Add the server config to your Claude Desktop configuration:
 
 ## 🛠 Usage
 
+### Search Tool
+
 The server provides a powerful search tool with the following parameters:
 
 ```typescript
@@ -88,7 +93,26 @@ The server provides a powerful search tool with the following parameters:
 }
 ```
 
-### Example Response
+### Deep Research Tool
+
+For more comprehensive research needs, the server provides a deep research tool that performs multi-step research with the following parameters:
+
+```typescript
+{
+  "query": string,          // Research query or question
+  "depth"?: "basic" | "standard" | "deep",  // Research depth (default: "standard")
+  "maxSources"?: number     // Maximum sources to include (default: 10)
+}
+```
+
+The deep research tool:
+- Breaks down complex queries into focused sub-queries
+- Executes multiple searches to gather comprehensive information
+- Uses AI to synthesize information from multiple sources
+- Formats results with proper citations and references
+- Adapts its research strategy based on intermediate results
+
+### Search Tool Example Response
 
 The search results include rich data:
 

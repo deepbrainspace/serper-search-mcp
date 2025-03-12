@@ -201,7 +201,7 @@ export const config = {
   
   // OpenRouter config
   openRouterApiKey: getRequiredEnv('OPENROUTER_API_KEY'),
-  openRouterModel: process.env.OPENROUTER_MODEL || 'anthropic/claude-3-opus',
+  openRouterModel: process.env.OPENROUTER_MODEL || 'google/gemini-2.0-flash-001',
   openRouterUrl: 'https://openrouter.ai/api/v1',
   
   // Research depth settings

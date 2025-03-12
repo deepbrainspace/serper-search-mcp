@@ -11,13 +11,21 @@ import {
 } from '@modelcontextprotocol/sdk/types.js';
 
 import { SerperClient } from './infrastructure/api/serperClient.js';
+import { OpenRouterClient } from './infrastructure/api/openRouterClient.js';
+import { OpenRouterAdapter } from './adapters/llm/openRouterAdapter.js';
 import { SearchService } from './domain/services/searchService.js';
+import { AgentService } from './domain/services/agentService.js';
+import { ResearchService } from './domain/services/researchService.js';
 import { SearchToolHandler } from './application/tools/handlers/searchToolHandler.js';
+import { ResearchToolHandler } from './application/tools/handlers/researchToolHandler.js';
 import { searchToolDefinition } from './application/tools/schemas/searchToolSchema.js';
+import { researchToolDefinition } from './application/tools/schemas/researchToolSchema.js';
+import { ResearchOrchestrator } from './application/orchestration/researchOrchestrator.js';
 
 export class SerperSearchServer {
   private server: Server;
   private searchToolHandler: SearchToolHandler;
+  private researchToolHandler: ResearchToolHandler;
 
   constructor() {
     // Initialize server
@@ -33,10 +41,29 @@ export class SerperSearchServer {
       }
     );
 
-    // Initialize domain services and tool handlers
+    // Initialize API clients
     const serperClient = new SerperClient();
+    const openRouterClient = new OpenRouterClient();
+    
+    // Initialize adapters
+    const llmAdapter = new OpenRouterAdapter(openRouterClient);
+    
+    // Initialize domain services
     const searchService = new SearchService(serperClient);
+    const agentService = new AgentService(); // No constructor parameters needed
+    const researchService = new ResearchService(); // No constructor parameters needed
+    
+    // Initialize orchestrators
+    const researchOrchestrator = new ResearchOrchestrator(
+      researchService,
+      agentService,
+      searchService,
+      llmAdapter
+    );
+    
+    // Initialize tool handlers
     this.searchToolHandler = new SearchToolHandler(searchService);
+    this.researchToolHandler = new ResearchToolHandler(researchOrchestrator);
 
     // Register tool handlers
     this.setupToolHandlers();
@@ -51,19 +78,23 @@ export class SerperSearchServer {
   private setupToolHandlers() {
     // Register tool definitions
     this.server.setRequestHandler(ListToolsRequestSchema, async () => ({
-      tools: [searchToolDefinition],
+      tools: [searchToolDefinition, researchToolDefinition],
     }));
 
     // Register tool request handler
     this.server.setRequestHandler(CallToolRequestSchema, async (request) => {
-      if (request.params.name !== searchToolDefinition.name) {
+      if (request.params.name === searchToolDefinition.name) {
+        return this.searchToolHandler.handleSearchRequest(request.params.arguments);
+      } 
+      else if (request.params.name === researchToolDefinition.name) {
+        return this.researchToolHandler.handleResearchRequest(request.params.arguments);
+      }
+      else {
         throw new McpError(
           ErrorCode.MethodNotFound,
           `Unknown tool: ${request.params.name}`
         );
       }
-
-      return this.searchToolHandler.handleSearchRequest(request.params.arguments);
     });
   }
 
