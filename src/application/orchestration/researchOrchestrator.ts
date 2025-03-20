@@ -77,8 +77,8 @@ export class ResearchOrchestrator {
           continue;
         }
         
-        // Get agent decision via LLM
-        const decision = await this.agentService.makeDecision(state, this.llmAdapter);
+        // Get agent decision via LLM, passing depth parameter
+        const decision = await this.agentService.makeDecision(state, this.llmAdapter, request.depth);
         
         if (decision.action === 'search' && decision.query) {
           // Execute search
@@ -122,8 +122,8 @@ export class ResearchOrchestrator {
       state.status = 'complete';
     }
     
-    // Synthesize the final result
-    return this.researchService.synthesizeResults(state, this.llmAdapter);
+    // Synthesize the final result with appropriate depth
+    return this.researchService.synthesizeResults(state, this.llmAdapter, request.depth);
   }
   
   /**

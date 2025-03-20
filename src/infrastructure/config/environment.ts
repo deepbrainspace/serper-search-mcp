@@ -47,22 +47,39 @@ export const config = {
   // Research depth settings
   researchDepthSettings: {
     basic: { 
-      maxSubQueries: 3, 
+      maxSubQueries: 4, 
       maxSearchesPerQuery: 1,
-      maxIterations: 5,
-      temperature: 0.7
+      maxIterations: 6,
+      temperature: {
+        decision: 0.3,      // More focused decisions
+        subqueries: 0.7,    // Creative sub-query generation
+        synthesis: 0.4      // Balanced synthesis
+      }
     },
     standard: { 
-      maxSubQueries: 5, 
+      maxSubQueries: 7, 
       maxSearchesPerQuery: 2,
-      maxIterations: 10,
-      temperature: 0.5
+      maxIterations: 15,
+      temperature: {
+        decision: 0.25,     // More focused decisions
+        subqueries: 0.65,   // Balance of creativity and focus
+        synthesis: 0.35     // More structured synthesis
+      }
     },
     deep: { 
-      maxSubQueries: 10, 
-      maxSearchesPerQuery: 3,
-      maxIterations: 20,
-      temperature: 0.3
+      maxSubQueries: 12, 
+      maxSearchesPerQuery: 4,
+      maxIterations: 25,
+      temperature: {
+        decision: 0.2,      // Highly analytical decisions
+        subqueries: 0.6,    // Strategic sub-query generation
+        synthesis: 0.3      // Highly structured synthesis
+      },
+      additionalFeatures: {
+        exploreBreadth: true,       // Explore multiple angles
+        deepDive: true,             // Explore topics in depth
+        crossReferenceResults: true // Compare information across sources
+      }
     }
   }
 };

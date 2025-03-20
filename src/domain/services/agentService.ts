@@ -14,7 +14,11 @@ export class AgentService {
   /**
    * Makes a decision about the next research step
    */
-  async makeDecision(state: ResearchState, llmAdapter: LLMAdapter): Promise<AgentDecision> {
+  async makeDecision(
+    state: ResearchState, 
+    llmAdapter: LLMAdapter,
+    depth: 'basic' | 'standard' | 'deep' = 'standard'
+  ): Promise<AgentDecision> {
     // Replace template variables in the prompt
     const filledPrompt = DECISION_PROMPT
       .replace('{{originalQuery}}', state.originalQuery)
@@ -26,9 +30,12 @@ export class AgentService {
         : '- None')
       .replace('{{searchResultsSummary}}', this.formatSearchResultsSummary(state));
     
-    // Request decision from LLM
+    // Request decision from LLM with depth-specific temperature
+    const depthSettings = config.researchDepthSettings[depth];
+    const temperature = depthSettings.temperature.decision;
+    
     const decisionText = await llmAdapter.generateCompletion(filledPrompt, {
-      temperature: 0.2, // Low temperature for more deterministic responses
+      temperature, // Use temperature specific to decision making
       maxTokens: 500
     });
     
@@ -68,16 +75,17 @@ export class AgentService {
   ): Promise<SubQuery[]> {
     const depthSettings = config.researchDepthSettings[depth];
     const numSubQueries = depthSettings.maxSubQueries;
+    const temperature = depthSettings.temperature.subqueries;
     
     // Replace template variables in the prompt
     const filledPrompt = SUBQUERY_GENERATION_PROMPT
       .replace('{{originalQuery}}', query)
       .replace('{{numSubQueries}}', numSubQueries.toString());
     
-    // Request sub-queries from LLM
+    // Request sub-queries from LLM with depth-specific temperature
     const subQueriesText = await llmAdapter.generateCompletion(filledPrompt, {
-      temperature: 0.7, // Higher temperature for more diverse sub-queries
-      maxTokens: 1000
+      temperature, // Use temperature specific to sub-query generation
+      maxTokens: 1500
     });
     
     try {
