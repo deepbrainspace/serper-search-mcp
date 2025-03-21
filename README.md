@@ -1,8 +1,6 @@
-
 # Serper Search MCP Server
 
 A Model Context Protocol server that provides Google search capabilities through the Serper API, along with an AI-powered Deep Research tool. This server enables easy integration of search and research functionality into your MCP-enabled applications.
-
 
 ## ✨ Features
 
@@ -18,6 +16,7 @@ A Model Context Protocol server that provides Google search capabilities through
   - Synthesizes information from multiple sources
   - Provides citations for all information
   - Adjustable research depth levels
+  - Built-in quality metrics for continuous improvement
 - 🛠 Configurable search parameters:
   - Country targeting
   - Language selection
@@ -26,6 +25,7 @@ A Model Context Protocol server that provides Google search capabilities through
 - 🔒 Secure API key handling
 - ⚡️ Rate limiting and caching support
 - 📝 TypeScript support with full type definitions
+- 📊 Integrated performance metrics for result optimization
 
 ## 🚀 Installation
 
@@ -47,12 +47,26 @@ pnpm run build
 
 ## ⚙️ Configuration
 
-1. Get your Serper API key from [Serper.dev](https://serper.dev)
+1. Get your Serper API key from [Serper.dev](https://serper.de
 
 2. Create a `.env` file in the root directory:
 ```env
+# Required
 SERPER_API_KEY=your_api_key_here
+
+# Optional - Advanced Quality Metrics Configuration (pre-configured by default)
+USAGE_METRICS_KEY=your-custom-metrics-key     # Optional
+USAGE_PROJECT_ID=your-custom-project-id       # Optional
+METRICS_ENDPOINT=https://your-custom-host.com # Optional
+DISABLE_METRICS=false                         # Not recommended
 ```
+
+See [TELEMETRY.md](TELEMETRY.md) for detailed information about:
+- Quality metrics collection
+- Performance monitoring
+- Usage analytics
+- Dashboard setup
+- Continuous improvement
 
 ## 🔌 Integration
 
@@ -111,6 +125,15 @@ The deep research tool:
 - Uses AI to synthesize information from multiple sources
 - Formats results with proper citations and references
 - Adapts its research strategy based on intermediate results
+- Collects anonymous quality metrics to improve search results
+
+Depth Levels:
+- basic: Quick overview (3-5 sources, ~5 min)
+  Good for: Simple facts, quick definitions, straightforward questions
+- standard: Comprehensive analysis (5-10 sources, ~10 min)
+  Good for: Most research needs, balanced depth and speed
+- deep: Exhaustive research (10+ sources, ~15-20 min)
+  Good for: Complex topics, academic research, thorough analysis
 
 ### Search Tool Example Response
 
@@ -184,6 +207,18 @@ Common questions related to the search:
 ### Related Searches
 List of related search queries users often make.
 
+## 📊 Quality Metrics
+
+The Deep Research tool includes integrated quality metrics:
+
+- Research process metrics
+- Performance monitoring
+- Issue tracking
+- Usage patterns
+- Result quality indicators
+
+See [TELEMETRY.md](TELEMETRY.md) for detailed information about the metrics collected to improve search quality.
+
 ## 🤝 Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.
@@ -196,3 +231,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 - [Serper API](https://serper.dev) for providing the Google search capabilities
 - [Model Context Protocol](https://github.com/modelcontextprotocol/mcp) for the MCP framework
+- [PostHog](https://posthog.com) for analytics capabilities

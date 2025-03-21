@@ -5,6 +5,7 @@ import { ResearchService } from '../../domain/services/researchService.js';
 import { AgentService } from '../../domain/services/agentService.js';
 import { SearchService } from '../../domain/services/searchService.js';
 import { LLMAdapter } from '../../adapters/llm/llmAdapter.js';
+import { MetricsService } from '../../infrastructure/quality/metricsService.js';
 import { 
   ResearchRequest, 
   ResearchState, 
@@ -21,6 +22,7 @@ export class ResearchOrchestrator {
   private agentService: AgentService;
   private searchService: SearchService;
   private llmAdapter: LLMAdapter;
+  private metrics: MetricsService;
   
   /**
    * Creates a new research orchestrator
@@ -29,12 +31,14 @@ export class ResearchOrchestrator {
     researchService: ResearchService,
     agentService: AgentService,
     searchService: SearchService,
-    llmAdapter: LLMAdapter
+    llmAdapter: LLMAdapter,
+    metrics: MetricsService
   ) {
     this.researchService = researchService;
     this.agentService = agentService;
     this.searchService = searchService;
     this.llmAdapter = llmAdapter;
+    this.metrics = metrics;
   }
   
   /**
@@ -44,6 +48,14 @@ export class ResearchOrchestrator {
     // Validate request
     this.validateRequest(request);
     
+    // Record operation start
+    await this.metrics.recordOperationStart({
+      query: request.query,
+      queryLength: request.query.length,
+      depth: request.depth || 'standard',
+      maxSources: request.maxSources || 10
+    });
+
     // Initialize research state
     let state: ResearchState = this.researchService.initializeState(request);
     let iterationCount = 0;
@@ -57,11 +69,19 @@ export class ResearchOrchestrator {
       try {
         // If no queries pending and no subqueries generated yet, generate initial subqueries
         if (state.pendingSubQueries.length === 0 && state.subQueries.length === 0) {
+          const startTime = Date.now();
           const subQueries = await this.agentService.generateSubQueries(
             request.query,
             this.llmAdapter,
             request.depth
           );
+          
+          await this.metrics.recordSearchDecomposition({
+            count: subQueries.length,
+            topics: subQueries.map(sq => sq.query),
+            generationTime: Date.now() - startTime
+          });
+          
           state = this.researchService.updateStateWithSubQueries(
             state,
             subQueries
@@ -72,7 +92,15 @@ export class ResearchOrchestrator {
         // If there are pending queries, execute one
         if (state.pendingSubQueries.length > 0) {
           const query = state.pendingSubQueries[0];
+          const searchStartTime = Date.now();
           const results = await this.searchService.performSearch({ query });
+          
+          await this.metrics.recordSearchExecution({
+            subQuery: query,
+            resultsCount: results.organic?.length || 0,
+            searchTime: Date.now() - searchStartTime
+          });
+          
           state = this.researchService.updateStateWithResults(state, query, results);
           continue;
         }
@@ -104,6 +132,15 @@ export class ResearchOrchestrator {
       } catch (error) {
         console.error(`Error in research iteration ${iterationCount}:`, error);
         
+        // Track error
+        const err = error as Error;
+        await this.metrics.recordExecutionIssue({
+          stage: this.getCurrentStage(state),
+          errorType: err.name || 'UnknownError',
+          errorMessage: err.message || 'An unknown error occurred',
+          query: request.query
+        });
+
         // If we have some results, proceed with synthesis despite the error
         if (state.searchResults.length > 0) {
           state.status = 'complete';
@@ -122,8 +159,37 @@ export class ResearchOrchestrator {
       state.status = 'complete';
     }
     
+    // Record operation completion before synthesis
+    await this.metrics.recordOperationCompletion({
+      totalSearches: state.searchResults.length,
+      totalSubQueries: state.subQueries.length,
+      depth: request.depth || 'standard',
+      success: true
+    });
+
     // Synthesize the final result with appropriate depth
-    return this.researchService.synthesizeResults(state, this.llmAdapter, request.depth);
+    const synthesisStartTime = Date.now();
+    const result = await this.researchService.synthesizeResults(state, this.llmAdapter, request.depth);
+    
+    // Record result generation
+    await this.metrics.recordResultGeneration({
+      finalSourceCount: result.citations.length,
+      synthesisTime: Date.now() - synthesisStartTime,
+      resultLength: result.answer.length,
+      citationCount: result.citations.length
+    });
+
+    return result;
+  }
+
+  /**
+   * Gets the current stage of research for error tracking
+   */
+  private getCurrentStage(state: ResearchState): 'initialization' | 'analysis' | 'search' | 'synthesis' {
+    if (!state) return 'initialization';
+    if (state.searchResults.length === 0) return 'analysis';
+    if (state.status !== 'complete') return 'search';
+    return 'synthesis';
   }
   
   /**

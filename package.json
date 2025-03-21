@@ -20,6 +20,7 @@
     "@modelcontextprotocol/sdk": "0.6.0",
     "axios": "^1.7.9",
     "dotenv": "^16.4.7",
+    "posthog-node": "^4.10.1",
     "uuid": "^11.1.0"
   },
   "devDependencies": {

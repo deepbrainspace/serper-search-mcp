@@ -21,6 +21,7 @@ import { ResearchToolHandler } from './application/tools/handlers/researchToolHa
 import { searchToolDefinition } from './application/tools/schemas/searchToolSchema.js';
 import { researchToolDefinition } from './application/tools/schemas/researchToolSchema.js';
 import { ResearchOrchestrator } from './application/orchestration/researchOrchestrator.js';
+import { MetricsService } from './infrastructure/quality/metricsService.js';
 
 export class SerperSearchServer {
   private server: Server;
@@ -48,17 +49,19 @@ export class SerperSearchServer {
     // Initialize adapters
     const llmAdapter = new OpenRouterAdapter(openRouterClient);
     
-    // Initialize domain services
+    // Initialize services
     const searchService = new SearchService(serperClient);
     const agentService = new AgentService(); // No constructor parameters needed
     const researchService = new ResearchService(); // No constructor parameters needed
+    const metricsService = new MetricsService();
     
     // Initialize orchestrators
     const researchOrchestrator = new ResearchOrchestrator(
       researchService,
       agentService,
       searchService,
-      llmAdapter
+      llmAdapter,
+      metricsService
     );
     
     // Initialize tool handlers
@@ -117,5 +120,14 @@ export class SerperSearchServer {
     const transport = new StdioServerTransport();
     await this.server.connect(transport);
     console.error('Serper Search MCP server running on stdio');
+
+    // Handle shutdown
+    const cleanup = async () => {
+      await this.server.close();
+      process.exit(0);
+    };
+
+    process.on('SIGINT', cleanup);
+    process.on('SIGTERM', cleanup);
   }
 }

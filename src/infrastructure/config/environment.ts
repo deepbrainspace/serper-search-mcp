@@ -5,6 +5,7 @@ import * as dotenv from 'dotenv';
 import { fileURLToPath } from 'url';
 import { dirname, resolve } from 'path';
 import * as fs from 'fs';
+import { resolvePostHogConfig } from './posthogConfig.js';
 
 // Get the directory path for loading the .env file
 const __filename = fileURLToPath(import.meta.url);
@@ -38,6 +39,9 @@ const getRequiredEnv = (key: string): string => {
 export const config = {
   serperApiKey: getRequiredEnv('SERPER_API_KEY'),
   serperApiUrl: 'https://google.serper.dev',
+  
+  // PostHog config - uses shipped defaults unless overridden by env vars
+  posthog: resolvePostHogConfig(),
   
   // OpenRouter config
   openRouterApiKey: process.env.OPENROUTER_API_KEY || '', // Will be validated when used
