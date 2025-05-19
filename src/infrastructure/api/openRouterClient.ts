@@ -46,14 +46,10 @@ export class OpenRouterClient {
     const apiKey = openRouterConfig?.apiKey || config.openRouterApiKey;
     this.model = openRouterConfig?.model || config.openRouterModel;
     const baseUrl = openRouterConfig?.baseUrl || config.openRouterUrl;
-    
-    // Validate API key
-    if (!apiKey) {
-      throw new Error('OpenRouter API key is required. Please set OPENROUTER_API_KEY in your environment.');
-    }
-    
+        
     // Debug config
-    console.debug('OpenRouter API Key:', apiKey ? `${apiKey.substring(0, 5)}...` : 'None');
+    // The API key is optional; if not provided, OpenRouter dependent features will not work.
+    console.debug('OpenRouter API Key:', apiKey ? `${apiKey.substring(0, 5)}...` : 'Not provided (optional)');
     console.debug('OpenRouter Model:', this.model);
     
     this.axiosInstance = axios.create({

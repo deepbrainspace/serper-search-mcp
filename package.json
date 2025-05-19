@@ -1,6 +1,6 @@
 {
   "name": "@nayeemsyed/serper-search-mcp",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "A Model Context Protocol server for Serper.dev search",
   "type": "module",
   "main": "build/index.js",
