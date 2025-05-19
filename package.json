@@ -1,20 +1,24 @@
 {
-  "name": "serper-search-server",
+  "name": "@nayeemsyed/serper-search-mcp",
   "version": "0.1.0",
-  "description": "A Model Context Protocol server",
-  "private": true,
+  "description": "A Model Context Protocol server for Serper.dev search",
   "type": "module",
+  "main": "build/index.js",
+  "types": "build/index.d.ts",
   "bin": {
-    "serper-search-server": "./build/index.js"
+    "serper-search-mcp": "./build/index.js"
   },
   "files": [
     "build"
   ],
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
-    "build": "npx tsc && node -e \"require('fs').chmodSync('build/index.js', '755')\"",
-    "prepare": "npm run build",
-    "watch": "npx tsc --watch",
-    "inspector": "npx @modelcontextprotocol/inspector build/index.js"
+    "build": "pnpm tsc && node -e \"require('fs').chmodSync('build/index.js', '755')\"",
+    "prepare": "pnpm run build",
+    "watch": "pnpm tsc --watch",
+    "inspector": "pnpm @modelcontextprotocol/inspector build/index.js"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "0.6.0",

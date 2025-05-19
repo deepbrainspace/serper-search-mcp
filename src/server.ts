@@ -8,6 +8,7 @@ import {
   ListToolsRequestSchema,
   ErrorCode,
   McpError,
+  CallToolRequest,
 } from '@modelcontextprotocol/sdk/types.js';
 
 import { SerperClient } from './infrastructure/api/serperClient.js';
@@ -85,10 +86,10 @@ export class SerperSearchServer {
     }));
 
     // Register tool request handler
-    this.server.setRequestHandler(CallToolRequestSchema, async (request) => {
+    this.server.setRequestHandler(CallToolRequestSchema, async (request: CallToolRequest) => {
       if (request.params.name === searchToolDefinition.name) {
         return this.searchToolHandler.handleSearchRequest(request.params.arguments);
-      } 
+      }
       else if (request.params.name === researchToolDefinition.name) {
         return this.researchToolHandler.handleResearchRequest(request.params.arguments);
       }
@@ -105,7 +106,7 @@ export class SerperSearchServer {
    * Sets up error handling for the server
    */
   private setupErrorHandling() {
-    this.server.onerror = (error) => console.error('[MCP Error]', error);
+    this.server.onerror = (error: Error) => console.error('[MCP Error]', error);
     
     process.on('SIGINT', async () => {
       await this.server.close();

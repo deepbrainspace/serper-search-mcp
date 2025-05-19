@@ -29,20 +29,18 @@ A Model Context Protocol server that provides Google search capabilities through
 
 ## 🚀 Installation
 
-1. Clone the repository:
-```bash
-git clone https://github.com/yourusername/serper-search-server.git
-cd serper-search-server
-```
+To use the Serper Search MCP server, you can run it directly using `npx` or install it globally.
 
-2. Install dependencies:
-```bash
-pnpm install
-```
+**Using NPX (recommended for quick use):**
+No installation step is needed. You can run the server directly (see "Usage with NPX" section below).
 
-3. Build the server:
+**Global Installation (optional):**
 ```bash
-pnpm run build
+pnpm add -g @nayeemsyed/serper-search-mcp
+```
+Or using npm:
+```bash
+npm install -g @nayeemsyed/serper-search-mcp
 ```
 
 ## ⚙️ Configuration
@@ -80,8 +78,24 @@ Add the server config to your Claude Desktop configuration:
 ```json
 {
   "mcpServers": {
-    "serper-search-server": {
-      "command": "/path/to/serper-search-server/build/index.js",
+    "@nayeemsyed/serper-search-mcp": {
+      "command": "npx @nayeemsyed/serper-search-mcp",
+      "env": {
+        "SERPER_API_KEY": "your_api_key_here"
+        // You can also set other environment variables here if needed
+        // "OPENROUTER_API_KEY": "your_openrouter_key",
+        // "POSTHOG_API_KEY": "your_posthog_key"
+      }
+    }
+  }
+}
+```
+If you installed it globally, you can use:
+```json
+{
+  "mcpServers": {
+    "@nayeemsyed/serper-search-mcp": {
+      "command": "serper-search-mcp", // Assumes 'serper-search-mcp' is in your PATH
       "env": {
         "SERPER_API_KEY": "your_api_key_here"
       }
@@ -90,7 +104,22 @@ Add the server config to your Claude Desktop configuration:
 }
 ```
 
-## 🛠 Usage
+## 🛠 Usage with NPX
+
+You can run the server directly from the command line using `npx`:
+
+```bash
+npx @nayeemsyed/serper-search-mcp
+```
+
+Make sure you have your `.env` file configured in the directory where you run this command, or set the environment variables (`SERPER_API_KEY`, etc.) in your shell.
+
+If you have it installed globally, you can run:
+```bash
+serper-search-mcp
+```
+
+### Search Tool
 
 ### Search Tool
 
