@@ -12,7 +12,21 @@ import {
   // ToolDefinition, // Removed as it might not be exported directly
 } from '@modelcontextprotocol/sdk/types.js';
 
-import packageInfo from '../package.json' assert { type: "json" }; // Corrected path and added import assertion
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+// Helper to read and parse package.json
+const readPackageJson = () => {
+  // For ESM, __dirname is not available directly. Construct path from import.meta.url.
+  const currentFilePath = fileURLToPath(import.meta.url);
+  const currentDirPath = path.dirname(currentFilePath);
+  const packageJsonPath = path.resolve(currentDirPath, '../package.json');
+  const fileContent = fs.readFileSync(packageJsonPath, 'utf-8');
+  return JSON.parse(fileContent);
+};
+const packageInfo = readPackageJson();
+
 import { SerperClient } from './infrastructure/api/serperClient.js';
 import { OpenRouterClient } from './infrastructure/api/openRouterClient.js';
 import { GoogleGenAIClient } from './infrastructure/api/googleGenAiClient.js';
