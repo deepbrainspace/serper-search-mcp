@@ -10,16 +10,15 @@ import { resolvePostHogConfig } from './posthogConfig.js';
 // Get the directory path for loading the .env file
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
-const rootDir = resolve(__dirname, '../../..'); // Only need to go up 3 levels from src/infrastructure/config
+const executionDir = process.cwd(); // Get the directory where the command was executed
 
-// Load environment variables from .env file
-dotenv.config({ path: resolve(rootDir, '.env') });
+// Load environment variables from .env file in the execution directory
+dotenv.config({ path: resolve(executionDir, '.env') });
 
 // Provide debugging info for path resolution
-console.debug('Environment config path:', __dirname);
-console.debug('Root directory path:', rootDir); 
-console.debug('.env path:', resolve(rootDir, '.env'));
-console.debug('.env exists:', fs.existsSync(resolve(rootDir, '.env')));
+console.debug('Executing from directory:', executionDir);
+console.debug('Attempting to load .env from:', resolve(executionDir, '.env'));
+console.debug('.env exists in execution directory:', fs.existsSync(resolve(executionDir, '.env')));
 
 // Configuration constants
 export const RATE_LIMIT = 50; // requests per minute

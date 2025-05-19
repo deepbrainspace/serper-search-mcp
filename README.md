@@ -79,25 +79,27 @@ Add the server config to your Claude Desktop configuration:
 {
   "mcpServers": {
     "@nayeemsyed/serper-search-mcp": {
-      "command": "npx @nayeemsyed/serper-search-mcp",
+      "command": "npx",
+      "args": [
+        "-y",
+        "@nayeemsyed/serper-search-mcp"
+      ],
       "env": {
         "SERPER_API_KEY": "your_api_key_here"
-        // You can also set other environment variables here if needed
-        // "OPENROUTER_API_KEY": "your_openrouter_key",
-        // "POSTHOG_API_KEY": "your_posthog_key"
       }
     }
   }
 }
 ```
-If you installed it globally, you can use:
+If you installed it globally (e.g., `pnpm add -g @nayeemsyed/serper-search-mcp`), you might be able to use a simpler command:
 ```json
 {
   "mcpServers": {
     "@nayeemsyed/serper-search-mcp": {
-      "command": "serper-search-mcp", // Assumes 'serper-search-mcp' is in your PATH
+      "command": "serper-search-mcp", // This is the binary name from your package.json
       "env": {
         "SERPER_API_KEY": "your_api_key_here"
+        // Add other env vars as needed
       }
     }
   }
