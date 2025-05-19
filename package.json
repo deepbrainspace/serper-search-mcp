@@ -1,6 +1,6 @@
 {
   "name": "@nayeemsyed/serper-search-mcp",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "description": "A Model Context Protocol server for Serper.dev search",
   "type": "module",
   "main": "build/index.js",
@@ -21,6 +21,7 @@
     "inspector": "pnpm @modelcontextprotocol/inspector build/index.js"
   },
   "dependencies": {
+    "@google/generative-ai": "^0.17.0",
     "@modelcontextprotocol/sdk": "0.6.0",
     "axios": "^1.7.9",
     "dotenv": "^16.4.7",

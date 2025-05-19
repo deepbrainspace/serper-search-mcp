@@ -31,31 +31,37 @@ export interface ChatResponse {
   }[];
 }
 
-export interface OpenRouterConfig {
-  apiKey: string;
-  model: string;
-  baseUrl: string;
-}
+// OpenRouterConfig interface can be removed if not used elsewhere, or kept for clarity
+// export interface OpenRouterConfig {
+//   apiKey: string;
+//   model: string;
+//   baseUrl: string;
+// }
 
 export class OpenRouterClient {
   private axiosInstance: AxiosInstance;
   private model: string;
+  private apiKey: string;
 
-  constructor(openRouterConfig?: OpenRouterConfig) {
-    // If no config is provided, use environment config
-    const apiKey = openRouterConfig?.apiKey || config.openRouterApiKey;
-    this.model = openRouterConfig?.model || config.openRouterModel;
-    const baseUrl = openRouterConfig?.baseUrl || config.openRouterUrl;
+  constructor(apiKey: string, model: string, baseUrl?: string) {
+    this.apiKey = apiKey;
+    this.model = model;
+    const effectiveBaseUrl = baseUrl || config.openRouterUrl;
         
     // Debug config
-    // The API key is optional; if not provided, OpenRouter dependent features will not work.
-    console.debug('OpenRouter API Key:', apiKey ? `${apiKey.substring(0, 5)}...` : 'Not provided (optional)');
+    console.debug('Instantiating OpenRouterClient...');
+    console.debug('OpenRouter API Key:', this.apiKey ? `${this.apiKey.substring(0, 5)}...` : 'Not provided');
     console.debug('OpenRouter Model:', this.model);
+    console.debug('OpenRouter Base URL:', effectiveBaseUrl);
+    
+    if (!this.apiKey) {
+      console.warn('OpenRouterClient initialized without an API key. API calls will likely fail.');
+    }
     
     this.axiosInstance = axios.create({
-      baseURL: baseUrl,
+      baseURL: effectiveBaseUrl,
       headers: {
-        'Authorization': `Bearer ${apiKey}`,
+        'Authorization': `Bearer ${this.apiKey}`,
         'Content-Type': 'application/json',
         'HTTP-Referer': 'https://serper-search-server',
         'X-Title': 'Serper Search Deep Research'

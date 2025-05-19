@@ -47,17 +47,37 @@ npm install -g @nayeemsyed/serper-search-mcp
 
 1. Get your Serper API key from [Serper.dev](https://serper.de
 
-2. Create a `.env` file in the root directory:
+2. Create a `.env` file in the root directory where you run the server (e.g., when using `npx`):
 ```env
-# Required
+# --- Required for basic search ---
 SERPER_API_KEY=your_api_key_here
 
-# Optional - Advanced Quality Metrics Configuration (pre-configured by default)
-USAGE_METRICS_KEY=your-custom-metrics-key     # Optional
-USAGE_PROJECT_ID=your-custom-project-id       # Optional
-METRICS_ENDPOINT=https://your-custom-host.com # Optional
-DISABLE_METRICS=false                         # Not recommended
+# --- Optional: LLM Configuration for Deep Research tool ---
+# The Deep Research tool requires an LLM. Configure it using the variables below.
+# If SERPER_LLM_API_KEY is not provided, the Deep Research tool will be unavailable.
+
+SERPER_LLM_PROVIDER="google"  # Or "openrouter". Defaults to "google".
+SERPER_LLM_API_KEY="your_llm_api_key_here" # Your API key for either Google (Gemini) or OpenRouter.
+SERPER_LLM_MODEL=""           # Optional. Override the default model for the chosen provider.
+                              # Default for Google: "gemini-2.0-flash-lite-preview-02-05"
+                              # Default for OpenRouter: "google/gemini-flash-1.5" (or other suitable model)
+
+# --- Optional: Advanced Quality Metrics Configuration ---
+# (These are pre-configured by default)
+# USAGE_METRICS_KEY=your-custom-metrics-key
+# USAGE_PROJECT_ID=your-custom-project-id
+# METRICS_ENDPOINT=https://your-custom-host.com
+# DISABLE_METRICS=false # Not recommended
 ```
+**LLM Configuration Details:**
+- **`SERPER_LLM_PROVIDER`**: Specifies the LLM provider.
+  - `"google"` (default): Uses Google Generative AI (Gemini models). `SERPER_LLM_API_KEY` should be your Google AI Studio API key.
+  - `"openrouter"`: Uses OpenRouter. `SERPER_LLM_API_KEY` should be your OpenRouter API key.
+- **`SERPER_LLM_API_KEY`**: The API key for your chosen `SERPER_LLM_PROVIDER`.
+- **`SERPER_LLM_MODEL`**: (Optional) Specify a particular model to use. If not set, a default model for the chosen provider will be used:
+  - Google Default: `gemini-2.0-flash-lite-preview-02-05`
+  - OpenRouter Default: `google/gemini-flash-1.5` (or another suitable model like `mistralai/mistral-7b-instruct`)
+- If `SERPER_LLM_API_KEY` is not provided, the Deep Research tool will be unavailable.
 
 See [TELEMETRY.md](TELEMETRY.md) for detailed information about:
 - Quality metrics collection
@@ -82,24 +102,31 @@ Add the server config to your Claude Desktop configuration:
       "command": "npx",
       "args": [
         "-y",
-        "@nayeemsyed/serper-search-mcp"
+        "@nayeemsyed/serper-search-mcp" // You can append @version like @0.2.0 if needed
       ],
       "env": {
-        "SERPER_API_KEY": "your_api_key_here"
+        "SERPER_API_KEY": "your_serper_api_key_here",
+        // For Deep Research tool (if needed):
+        "SERPER_LLM_PROVIDER": "google",  // or "openrouter"
+        "SERPER_LLM_API_KEY": "your_actual_llm_api_key",
+        "SERPER_LLM_MODEL": "" // Optional: "gemini-2.5-pro-preview-05-06" or other model
+        // "DEBUG": "true" // If your server uses this for more verbose logging
       }
     }
   }
 }
 ```
-If you installed it globally (e.g., `pnpm add -g @nayeemsyed/serper-search-mcp`), you might be able to use a simpler command:
+If you installed it globally (e.g., `pnpm add -g @nayeemsyed/serper-search-mcp`), you might be able to use a simpler command, ensuring the environment variables are set in the MCP client's `env` block:
 ```json
 {
   "mcpServers": {
     "@nayeemsyed/serper-search-mcp": {
       "command": "serper-search-mcp", // This is the binary name from your package.json
       "env": {
-        "SERPER_API_KEY": "your_api_key_here"
-        // Add other env vars as needed
+        "SERPER_API_KEY": "your_serper_api_key_here",
+        "SERPER_LLM_PROVIDER": "google", // or "openrouter"
+        "SERPER_LLM_API_KEY": "your_actual_llm_api_key"
+        // "SERPER_LLM_MODEL": "your_preferred_model" // Optional
       }
     }
   }
