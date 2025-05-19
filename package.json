@@ -1,5 +1,5 @@
 {
-  "name": "@nayeemsyed/serper-search-mcp",
+  "name": "@deepbrain/serper-search-mcp",
   "version": "0.2.1",
   "description": "A Model Context Protocol server for Serper.dev search",
   "type": "module",

@@ -36,11 +36,11 @@ No installation step is needed. You can run the server directly (see "Usage with
 
 **Global Installation (optional):**
 ```bash
-pnpm add -g @nayeemsyed/serper-search-mcp
+pnpm add -g @deepbrain/serper-search-mcp
 ```
 Or using npm:
 ```bash
-npm install -g @nayeemsyed/serper-search-mcp
+npm install -g @deepbrain/serper-search-mcp
 ```
 
 ## ⚙️ Configuration
@@ -98,11 +98,11 @@ Add the server config to your Claude Desktop configuration:
 ```json
 {
   "mcpServers": {
-    "@nayeemsyed/serper-search-mcp": {
+    "@deepbrain/serper-search-mcp": {
       "command": "npx",
       "args": [
         "-y",
-        "@nayeemsyed/serper-search-mcp" // You can append @version like @0.2.0 if needed
+        "@deepbrain/serper-search-mcp" // You can append @version like @0.2.0 if needed
       ],
       "env": {
         "SERPER_API_KEY": "your_serper_api_key_here",
@@ -116,11 +116,11 @@ Add the server config to your Claude Desktop configuration:
   }
 }
 ```
-If you installed it globally (e.g., `pnpm add -g @nayeemsyed/serper-search-mcp`), you might be able to use a simpler command, ensuring the environment variables are set in the MCP client's `env` block:
+If you installed it globally (e.g., `pnpm add -g @deepbrain/serper-search-mcp`), you might be able to use a simpler command, ensuring the environment variables are set in the MCP client's `env` block:
 ```json
 {
   "mcpServers": {
-    "@nayeemsyed/serper-search-mcp": {
+    "@deepbrain/serper-search-mcp": {
       "command": "serper-search-mcp", // This is the binary name from your package.json
       "env": {
         "SERPER_API_KEY": "your_serper_api_key_here",
@@ -138,7 +138,7 @@ If you installed it globally (e.g., `pnpm add -g @nayeemsyed/serper-search-mcp`)
 You can run the server directly from the command line using `npx`:
 
 ```bash
-npx @nayeemsyed/serper-search-mcp
+npx @deepbrain/serper-search-mcp
 ```
 
 Make sure you have your `.env` file configured in the directory where you run this command, or set the environment variables (`SERPER_API_KEY`, etc.) in your shell.
